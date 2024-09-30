@@ -24,14 +24,17 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Get changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v45
-        # To compare changes between the current commit and the last pushed remote commit set `since_last_remote_commit: true`. e.g
-        # with:
-        #   since_last_remote_commit: true
+      # - name: Get changed files
+      #   id: changed-files
+      #   uses: tj-actions/changed-files@v45
+      #   # To compare changes between the current commit and the last pushed remote commit set `since_last_remote_commit: true`. e.g
+      #   # with:
+      #   #   since_last_remote_commit: true
 
-      - name: Test all changed files
-        env:
-          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
-        run: yarn test:cover ${ALL_CHANGED_FILES} --passWithNoTests
+      # - name: Test all changed files
+      #   env:
+      #     ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+      #   run: yarn test:cover ${ALL_CHANGED_FILES} --passWithNoTests
+
+      - name: Test all files
+        run: yarn test:cover
