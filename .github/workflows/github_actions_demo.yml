@@ -15,6 +15,9 @@ jobs:
       # -----------------------------------------------------------------------------------------------------------
       # Example 1
       # -----------------------------------------------------------------------------------------------------------
+      - name: Base SHA
+        id: base-sha
+        run: echo "sha=$(git rev-parse origin/main)" >> $GITHUB_OUTPUT
       - name: Set node version
         uses: actions/setup-node@v3
         with:
@@ -27,11 +30,17 @@ jobs:
       - name: Get changed files
         id: changed-files
         uses: tj-actions/changed-files@v45
-        # To compare changes between the current commit and the last pushed remote commit set `since_last_remote_commit: true`. e.g
-        # with:
-        #   since_last_remote_commit: true
+        with:
+          base_sha: "${{ steps.base-sha.outputs.sha }}"
 
       - name: Test all changed files
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
-        run: yarn test:cover ${ALL_CHANGED_FILES} --passWithNoTests
+        run: |
+          files=()
+          i=0
+          for file in ${ALL_CHANGED_FILES}; do
+              files[i]=$(echo $file | sed 's/.*\/ *\([^\.]*\).*/\1/')
+              i=$(($i+1))
+          done
+          yarn test:cover ${files[@]} --passWithNoTests
