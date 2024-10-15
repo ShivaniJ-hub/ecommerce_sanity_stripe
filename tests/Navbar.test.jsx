@@ -20,6 +20,7 @@ jest.mock("../context/StateContext", () => ({
 describe("test Navbar", () => {
   it("render", () => {
     render(<Navbar />);
+    expect(screen.getByText("JSM Headphones")).toBeInTheDocument();
     expect(screen.getByText("Your shopping bag is empty")).toBeInTheDocument();
   });
 });
