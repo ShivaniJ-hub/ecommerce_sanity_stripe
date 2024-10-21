@@ -17,7 +17,7 @@ jobs:
 
       - name: Get changes
         id: changes-custom
-        run: echo "chngs=$(git diff --name-only HEAD^1 HEAD)" >> $GITHUB_OUTPUT
+        run: echo "chngs='$(git diff --name-only HEAD^1 HEAD)'" >> $GITHUB_OUTPUT
 
       - name: print all changed file
         env:
