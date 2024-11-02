@@ -17,12 +17,13 @@ jobs:
 
       - name: Get changes
         id: changes-custom
-        run: echo "chngs=$(git diff --name-only HEAD^1 HEAD)" >> $GITHUB_OUTPUT
+        run: echo "changed_files=$(git diff --name-only -r HEAD^1 HEAD | xargs)" >> $GITHUB_OUTPUT
 
       - name: print all changed file
-        env:
-          CHANGED_FILES: ${{ steps.changes-custom.outputs.chngs }}
-        run: echo ${CHANGED_FILES}
+        run: |
+          for file in ${{ steps.changes-custom.outputs.changed_files }}; do
+            echo "$file was changed"
+          done
 
       # -----------------------------------------------------------------------------------------------------------
       # Example 1
