@@ -10,14 +10,10 @@ jobs:
     runs-on: ubuntu-latest # windows-latest || macos-latest
     name: Test changed-files
     steps:
-      - uses: actions/checkout@v4
-
-      # -----------------------------------------------------------------------------------------------------------
-      # Example 1
-      # -----------------------------------------------------------------------------------------------------------
-      - name: Base SHA
-        id: base-sha
-        run: echo "sha=$(git rev-parse origin/main)" >> $GITHUB_OUTPUT
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
       - name: Set node version
         uses: actions/setup-node@v3
         with:
@@ -27,19 +23,15 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Get changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v45
-        with:
-          base_sha: "${{ steps.base-sha.outputs.sha }}"
+      - name: Get changes
+        id: changes-custom
+        run: echo "changed_files=$(git diff --name-only -r HEAD^1 HEAD | xargs)" >> $GITHUB_OUTPUT
 
       - name: Test all changed files
-        env:
-          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
         run: |
           files=()
           i=0
-          for file in ${ALL_CHANGED_FILES}; do
+          for file in ${{ steps.changes-custom.outputs.changed_files }}; do
               files[i]=$(echo $file | sed 's/.*\/ *\([^\.]*\).*/\1/')
               i=$(($i+1))
           done
